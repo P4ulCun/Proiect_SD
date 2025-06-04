@@ -1,0 +1,23 @@
+14. Minimum spanning tree  
+- Kruskal
+- Prim
+
+13. Grafuri
+- reprezentare
+- BFS, DFS, topological sort
+
+11. Binary trees, AVL trees, Splay trees, Red-Black trees
+- Interval Search
+(B-trees?)
+
+10. Hash tables
+
+9. Lists. Skip lists
+
+8. Sorting algorithms
+
+7. Heaps
+
+6. Stack - Queue
+
+5. Complexities
