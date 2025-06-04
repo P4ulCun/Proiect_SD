@@ -9,7 +9,8 @@ class Node
     int value;
 public:
     friend class FibonacciHeap;
-    Node(int val) : value(val), next(nullptr), prev(nullptr), parent(nullptr), child(nullptr),
+    Node(int val) : value(val), next(nullptr), 
+    prev(nullptr), parent(nullptr), child(nullptr),
     degree(0), marked(false) {}
 
     Node* getNext() { return next; }
@@ -55,6 +56,7 @@ public:
         {
             heap -> next -> prev = heap -> prev;
             heap -> prev -> next = heap -> next;
+            // cut out the old min and append its children to the heap (top)
             heap = Pmerge(heap -> next, heap -> child);
         }
         if (heap == nullptr)
@@ -73,7 +75,7 @@ public:
                 if (d == heap)
                     break;
                 
-                 // merge the bigger node into the smaller one
+                 // make the bigger tree root a child of the smaller tree root
                 if (heap -> value < d -> value)
                 {
                     // d is bigger
@@ -88,6 +90,7 @@ public:
                     d -> next -> prev = d -> prev;
                     if (heap -> next = heap)
                     {
+                        // if heap has no siblings
                         d -> next = d -> prev = d; // make it a single node
                         PaddChild(d, heap);
                         heap = d; // set the new min
@@ -106,7 +109,8 @@ public:
                 }
                 continue; // continue to the next degree
             }
-            heap = heap -> next; // move to the next node in the heap
+
+            heap = heap -> next; // move to the next tree in the heap
         }
 
         // find the new min node in the circular linked list of head nodes
@@ -155,7 +159,7 @@ public:
             }
             else
             {
-                // if node is a head, check if it is the min
+                // if node is a head, check if it is the min and update
                 if (node -> value < heap -> value)
                     heap = node;
             }
@@ -181,7 +185,7 @@ private:
 			a=b;
 			b=temp;
 		}
-        // a must hold the lower value
+        // a holds the lower value
 
         // merge two heaps
         Node* aNext = a -> next;
