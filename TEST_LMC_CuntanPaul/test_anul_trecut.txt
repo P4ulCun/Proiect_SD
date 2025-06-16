@@ -1,0 +1,199 @@
+% Tanislav Alexia
+% grupa 132
+% Nr 2
+
+
+% EXERCITIU 1
+/*
+Primele 3 linii contin cazurile de baza in care daca lista are mai putin de 3 elemente
+sau e vida, prodConsec va intoarce tot o lista vida.
+Pe a 4 a linie se iau primele 3 elemente din lista si se inmultesc, dupa se pun in lista
+noua care trebuie returnata. Ca sa fie luate si urmatoarele elemente 3 cate 3 se va apela
+recursiv prodConsec cu prima lista care va contine ultimele 2 elemente din primele 3 si coada
+listei ce trebuie returnata
+*/
+
+prodConsec([],[]).
+prodConsec([_,_],[]).
+prodConsec([_],[]).
+prodConsec([H1,H2,H3|T1],[P|T2]):- P is H1*H2*H3, prodConsec([H2,H3|T1],T2).
+
+/*
+Pentru a testa programul am folosit urmatoarele exemple:
+?- prodConsec([1, 2, 3, 4, 5], R).
+	R=[6,24,60]
+
+?- prodConsec([1, 2, 3, 4, 5,2], R).
+	R = [6, 24, 60, 40]
+
+?- prodConsec([1, 2], R).
+	R=[]
+
+?- prodConsec([1, 2, 3], R).
+	R=[6]
+
+*/
+
+
+
+
+
+% EXERCITIU 2
+/*
+Primele 2 linii reprezinta cazurile de baza in care daca avem o lista vida
+va fi adevarata deoarece o lista vida nu va avea nimic in comun cu o alta lista vida sau
+orice alt tip de lista "_"
+A 3 a linie verifica daca punctul din prima lista nu exista in a doua lista, in cazul in care
+este un punct cu aceeasi coordY (indiferent de coordX). Aceasta este verificata folosind
+predicatul predefinit member(X,Lista) si operatorul \+ care neaga predicatul memeber pentru
+a se asigura ca in a doua lista NU exista niciun punct de forma p(_,CoordY) cu aceeasi 
+coordonata Y din prima lista. Dupa se apeleaza recursiv disjointY(T1,L) cu coada primei
+liste si toata lista a 2 a.
+*/
+
+disjointY([],[]).
+disjointY([], _).
+disjointY([p(_, CoordY)|T1], L) :- \+ member(p(_, CoordY), L), disjointY(T1, L).
+
+/*
+Pentru a testa programul am folosit urmatoarele exemple:
+?- disjointY([p(2, 1), p(4, 3)], [p(5, 2), p(7, 1)]).
+	false.
+
+?- disjointY([p(2, 1), p(4, 3)], [p(5, 2), p(4, 4)]).
+	true.
+
+?- disjointY([p(2, 7)], [p(5, 2), p(4, 4)]).
+	true
+
+?- disjointY([p(2, 2)], [p(5, 2), p(4, 2)]).
+	false
+
+?- disjointY([p(2, 1), p(4, 3)], [p(5, 2)]).
+	true
+
+?- disjointY([p(2, 1), p(4, 3)], [p(5, 3)]).
+	false
+
+*/
+rmdn(Phi, Phi) :- atom(Phi).
+rmdn(non(Phi), non(Phi)) :- atom(Phi).
+rmdn(non(non(Phi)), Psi) :- rmdn(Phi, Psi).
+rmdn(non(si(Phi,Psi)),non(A)) :- rmdn(si(Phi,Psi),A).
+rmdn(non(sau(Phi,Psi)),non(A)) :- rmdn(sau(Phi,Psi),A).
+rmdn(non(imp(Phi,Psi)),non(A)) :- rmdn(imp(Phi,Psi),A).
+rmdn(si(Phi, Psi), si(Phi1, Psi1)) :- rmdn(Phi, Phi1), rmdn(Psi, Psi1).
+rmdn(sau(Phi, Psi), sau(Phi1, Psi1)) :- rmdn(Phi, Phi1), rmdn(Psi, Psi1).
+rmdn(imp(Phi, Psi), imp(Phi1, Psi1)) :- rmdn(Phi, Phi1), rmdn(Psi, Psi1).
+
+% negVars/2 - Calculează numărul total de apariții negate ale variabilelor dintr-o
+% formulă propozițională, după eliminarea negațiilor duble.
+%
+% Parametri:
+% Phi - formula propozițională de intrare
+% R - rezultatul (numărul de negații)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+negVars(Phi, R) :-
+    % 1. Simplificăm formula prin eliminarea negațiilor duble
+    rmdn(Phi, SimplifiedPhi),
+    
+    % 2. Inițializăm contorul la 0 și numărăm negațiile
+    count_negations(SimplifiedPhi, 0, R).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% count_negations/3 - Predicat helper care numără recursiv negațiile
+%
+% Parametri:
+% CurrentTerm - termenul curent din formulă
+% Acc - acumulator pentru numărare
+% Result - rezultat final
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Caz de bază: termen atomic (variabilă propozițională)
+% Nu incrementăm contorul (nu există negație)
+count_negations(Atom, Count, Count) :- 
+    atom(Atom), !.  % Tăiere pentru eficiență (nu există alte cazuri pentru atomi)
+
+% Caz 1: Negație a unei variabile propoziționale
+% Incrementăm contorul cu 1
+count_negations(non(Phi), Acc, R) :-
+    atom(Phi), !,  % Verificăm dacă subtermenul este atomic
+    R is Acc + 1.
+
+% Caz 2: Negație a unei formule compuse
+% Numărăm negațiile doar din subformulă (negația compusă nu se numără)
+count_negations(non(Phi), Acc, R) :-
+    count_negations(Phi, Acc, R).  % Numărăm recursiv în subformulă
+
+% Caz 3: Conjuncție (și logic)
+count_negations(si(Phi, Psi), Acc, R) :-
+    count_negations(Phi, Acc, Temp),  % Numărăm în prima subformulă
+    count_negations(Psi, Temp, R).    % Continuăm cu a doua subformulă
+
+% Caz 4: Disjuncție (sau logic)
+count_negations(sau(Phi, Psi), Acc, R) :-
+    count_negations(Phi, Acc, Temp),
+    count_negations(Psi, Temp, R).
+
+% Caz 5: Implicație
+count_negations(imp(Phi, Psi), Acc, R) :-
+    count_negations(Phi, Acc, Temp),
+    count_negations(Psi, Temp, R).
+
+
+----- No comments:
+
+rmdn(Phi, Phi) :- atom(Phi).
+rmdn(non(Phi), non(Phi)) :- atom(Phi).
+rmdn(non(non(Phi)), Psi) :- rmdn(Phi, Psi).
+rmdn(non(si(Phi,Psi)),non(A)) :- rmdn(si(Phi,Psi),A).
+rmdn(non(sau(Phi,Psi)),non(A)) :- rmdn(sau(Phi,Psi),A).
+rmdn(non(imp(Phi,Psi)),non(A)) :- rmdn(imp(Phi,Psi),A).
+rmdn(si(Phi, Psi), si(Phi1, Psi1)) :- rmdn(Phi, Phi1), rmdn(Psi, Psi1).
+rmdn(sau(Phi, Psi), sau(Phi1, Psi1)) :- rmdn(Phi, Phi1), rmdn(Psi, Psi1).
+rmdn(imp(Phi, Psi), imp(Phi1, Psi1)) :- rmdn(Phi, Phi1), rmdn(Psi, Psi1).
+
+% Predicat principal care numără negațiile
+negVars(Phi, R) :-
+    rmdn(Phi, SimplifiedPhi),  % Eliminăm negațiile duble mai întâi
+    count_negations(SimplifiedPhi, 0, R).
+
+% Helper predicate to count negations
+count_negations(Atom, Count, Count) :- atom(Atom), !.
+count_negations(non(Phi), Acc, R) :-
+    (atom(Phi) -> 
+        R is Acc + 1
+    ; 
+        count_negations(Phi, Acc + 1, R)
+    ).
+count_negations(si(Phi, Psi), Acc, R) :-
+    count_negations(Phi, Acc, Temp),
+    count_negations(Psi, Temp, R).
+count_negations(sau(Phi, Psi), Acc, R) :-
+    count_negations(Phi, Acc, Temp),
+    count_negations(Psi, Temp, R).
+count_negations(imp(Phi, Psi), Acc, R) :-
+    count_negations(Phi, Acc, Temp),
+    count_negations(Psi, Temp, R).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

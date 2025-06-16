@@ -1,0 +1,177 @@
+
+O LISTA FORMATA DOAR DIN A------------------------------------------------------
+
+allA([a]).
+allA([a|Ta]):- allA(Ta).
+
+
+
+CA 2 LISTE SA DEA TRUE => L1 ARE DOAR A, L2 ARE DOAR B, ------------------------
+SI AMBELE AU ACEEASI LUNGIME / traduce o lista de a in b
+
+a2b([],[]).
+a2b([a|Ta],[b|Tb]):- a2b(Ta,Tb).
+
+
+
+VERIFICA DACA 2 LISTE SUNT IDENTICE, -------------------------------------------
+DAR PRIMELE 2 ELEMENTE SUNT EXCHANGED
+
+swap12([X, Y | Rest], [Y, X | Rest]).
+
+
+
+TRADUCERE DIN ENGELZA IN GERMANA------------------------------------------------
+
+tran(eins,one).
+tran(zwei,two).
+tran(drei,three).
+tran(vier,four).
+tran(fuenf,five).
+tran(sechs,six).
+tran(sieben,seven).
+tran(acht,eight).
+tran(neun,nine).
+
+listtran([],[]).
+listtran([H|T],[X|Y]):- tran(H,X), listtran(T,Y).
+
+
+
+ITI PUNE IN LISTA NOUA FIECARE ELEM DIN PRIMA LISTA DE 2 ORI---------------------
+
+twice([], []).
+twice([H | T], [H, H | Y]) :- twice(T, Y).
+
+
+
+ITI ELIMINA DUPLICATELE DACA SUNT UNA LANGA ALTA/ INV PROB DE SUS--------------------
+
+twice([], []).
+twice([H, H | T], [H | Y]) :- twice(T, Y).
+
+
+
+MAXIMUL UNEI LISTE PARCURSE PE ELEMENT (NU INDICE)-----------------------------------
+
+accMax([H|T],A,Max)  :- H>A, accMax(T,H,Max).
+accMax([H|T],A,Max)  :- H=<A, accMax(T,A,Max).
+accMax([],A,A).
+
+
+
+ITI ADUNA CATE 1 LA FIECARE ELEM DIN LISTA------------------------------------------
+
+addone([],[]).
+addone([H|T],[X|Y]):- X is H+1, addone(T,Y).
+
+
+
+PREFIXUL UNEI LISTE-----------------------------------------------------------------
+
+prefix(P,L):-  append(P,_,L).
+
+
+
+SUFIXUL UNEI LISTE------------------------------------------------------------------
+
+suffix(S,L):-  append(_,S,L).
+
+
+
+SUBLISTELE UNEI LISTE---------------------------------------------------------------
+
+sublist(SubL,L):-  suffix(S,L),  prefix(SubL,S).
+
+
+VERIFICI DACA O LISTA E DUBLA-------------------------------------------------------
+
+doubled(List) :- append(X, X, List).
+?- doubled([a,b,c,a,b,c]).     =>   true ca e din abc abc
+
+
+
+PALINDROMUL UNEI LISTE--------------------------------------------------------------
+
+palindrome(List) :- reverse(List, List).
+
+
+
+ELIMINA PRIMUL SI ULTIMUL ELEMENT DIN LISTA-----------------------------------------
+
+toptail(InList, OutList) :- append([_|Tail], [_], InList),
+    			    append(Tail, [], OutList).
+
+
+LISTA E O LISTA DACA CONTINE 1<= ELEM SI ULTIMUL ELEM E X---------------------------
+
+last(List, X) :-
+    rev(List, [X|_]).
+
+
+
+(RECUR)LISTA E O LISTA DACA CONTINE 1<= ELEM SI ULTIMUL ELEM E X---------------------
+last([X], X).
+last([_|T], X) :- last(T, X).
+
+
+
+ELIMINA PRIMUL SI ULTIMUL ELEMENT DIN LISTA-------------------------------------------
+toptail(InList, OutList) :-
+    length(InList, Length),
+    Length >= 2,
+    append([_|Tail], [_], InList),
+    append(Tail, [], OutList).
+
+
+                       SAU
+
+toptail([],[]).
+toptail([_],[]).
+toptail([_|T],R):- reverse(T,[_|L]), reverse(L,R).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

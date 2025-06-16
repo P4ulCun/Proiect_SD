@@ -1,0 +1,81 @@
+
+EXERCITIU 1
+
+child(anne,bridget).
+child(bridget,caroline).
+child(caroline,donna).
+child(donna,emily).
+
+descend(X,Y)  :-  child(X,Y).
+descend(X,Y)  :-  child(X,Z), descend(Z,Y).
+
+?- descend(anne,donna)     TRUE
+
+
+EXERCITIU 2
+
+/* First, write a knowledge base using the predicate 
+ * directlyIn/2 
+ * which encodes which doll is directly contained in which other doll. 
+ * Then, define a recursive predicate in/2 , 
+ * that tells us which doll is (directly or indirectly) 
+ * contained in which other dolls. 
+ * in(olga,katarina). is false  
+ * in(irina,olga). is true */
+
+directlyIn(irina,natasha).
+directlyIn(natasha,olga).
+directlyIn(olga,katarina).
+
+in(X,Y):- directlyIn(X,Y).
+in(X,Y):- directlyIn(X,Z), in(Z,Y).
+
+
+
+EXERCITIU 3
+
+directTrain(saarbruecken,dudweiler).
+directTrain(forbach,saarbruecken).
+directTrain(freyming,forbach).
+directTrain(stAvold,freyming).
+directTrain(fahlquemont,stAvold).
+directTrain(metz,fahlquemont).
+directTrain(nancy,metz).
+
+travelFromTo(X,Y):- directTrain(X,Y).
+travelFromTo(X,Y):- directTrain(X,Z), travelFromTo(Z,Y).
+
+
+
+EXERCITIU 4
+
+% Base case: Zero is not greater than any numeral.
+greater_than(succ(X), 0) :- succ(X) \= 0.
+
+% Recursive case: Check if X is greater than Y 
+% by recursively comparing their successors.
+greater_than(succ(X), succ(Y)) :- greater_than(X, Y).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
